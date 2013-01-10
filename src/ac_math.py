@@ -30,7 +30,7 @@ def azimuth(a,b):
   return az
 # Quadrant (elevation) and flight time
 def calc(range, dAlt, table):
-  rtable, atable, ttable, ltable = table
+  rtable, atable, ttable, ltable, r = table
 
   nom = lambda a, x, e: a*(x**e)
   ranges = [range for x in range(len(rtable))]
