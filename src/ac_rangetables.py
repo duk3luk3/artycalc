@@ -1,7 +1,7 @@
 guns = [
     [ 'M252','60mm mortar',
         [
-        'HE', [ 'Impact Fuze', 'Proximity Burst', 'Near-Surface Burst' ]
+        'HE', [ 'Impact Fuze', 'Proximity Burst', 'Near-Surface Burst' ],
             [ # charge 0
                 [ 1510.2500000,  -0.040499999999995,  -0.003725], # elev
                 [ 69.0000000,    -0.7800000,   0.0026000], # elev adjustment

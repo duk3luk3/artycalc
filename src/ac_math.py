@@ -1,5 +1,5 @@
 import math
-from operator import math
+from operator import add
 ## Basic geometry
 
 # Coordinate System origin is in lower left (Or South-West)
@@ -37,12 +37,12 @@ def calc(range, dAlt, table):
   exps = range(rtable)
 
   elev = \
-    reduce(add, map ( nom, rtable, ranges, exps)) - \               # range
-    reduce(add, map ( nom, atable, ranges, exps)) * dAlt / 100.0    # altitude adjust
+    reduce(add, map ( nom, rtable, ranges, exps)) - \
+    reduce(add, map ( nom, atable, ranges, exps)) * dAlt / 100.0   
  
   time = \
-    reduce(add, map ( nom, ttable, ranges, exps)) - \               # range
-    reduce(add, map ( nom, ltable, ranges, exps)) * dAlt / 100.0    # altitude adjust
+    reduce(add, map ( nom, ttable, ranges, exps)) - \
+    reduce(add, map ( nom, ltable, ranges, exps)) * dAlt / 100.0 
   
   return elev, time
 
