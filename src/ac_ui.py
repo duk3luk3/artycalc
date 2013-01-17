@@ -22,9 +22,24 @@ class AdjustMissionFrame:
         Label(f, text="Attitude:"         ).grid(row=6,column=0,sticky="E")
 
         self._TargetDesEntry = Entry(f)
-        self._TargetDesEntry.grid(row=1,column=1,columnspan=3,sticky="NSWE)
+        self._TargetDesEntry.grid(row=1,column=1,rowspan=3,sticky="NSWE)
         self._TargetDes = StringVar()
-        self._TargetDesEntry["textvariable"] = self._TargetDes 
+        self._TargetDesEntry["textvariable"] = self._TargetDes
+
+        self._TargetExtEntry = Entry(f)
+        self._TargetExtEntry.grid(row=4,colum=1)
+        self._TargetExtent = StringVar()
+        self._TargetExtEntry["textvariable"] = self._TargetExtent
+
+        self._TargetLengthEntry = Entry(f)
+        self._TargetLengthEntry.grid(row=5,column=1)
+        self._TargetLength = StringVar()
+        self._TargetLengthEntry["textvariable"] = self._TargetLength
+
+        self._TargetAttitudeEntry = Entry(f)
+        self._TargetAttitudeEntry.grid(row=5,column=1)
+        self._TargetAttitude = StringVar()
+        self._TargetAttitudeEntry["textvariable"] = self._TargetAttitude
 
         f = Frame(self._MainFrame)
         f.grid(row=1,column=1,rowspan=2)
@@ -41,11 +56,62 @@ class AdjustMissionFrame:
         Label(f, text="Adjust Piece:"       ).grid(row=8,column=0,sticky="E")
         Label(f, text="Sheaf:"              ).grid(row=9,column=0,sticky="E")
 
+        self._MethodDangercloseBox = Checkbutton(f, text="Yes")
+        self._MethodDangercloseBox.grid(row=1,column=1)
+        self._MethodDangerclose = IntVar()
+        self._MethodDangercloseBox["variable"] = self._MethodDangerclose
+
+        self._MethodNotesEntry = Entry(f)
+        self._MethodNotesEntry.grid(row=5,column=1)
+        self._MethodNotes = StringVar()
+        self._MethodNotesEntry["textvariable"] = self._MethodNotes
+
+        self._MethodAmmunitionBox = Combobox(batteryFrame)
+        self._MethodAmmunitionBox.current(0)
+        self._MethodAmmunitionBox.grid(row=1,column=5,sticky="WE")
+
+        self._MethodFuzeBox = Combobox(batteryFrame)
+        self._MethodFuzeBox.current(0)
+        self._MethodFuzeBox.grid(row=1,column=5,sticky="WE")
+        
+        self._MethodFuzetimeEntry = Entry(f)
+        self._MethodFuzetimeEntry.grid(row=2,column=1)
+        self._MethodFuzetime = StringVar()
+        self._MethodFuzetimeEntry["textvariable"] = self._MethodFuzetime
+
+        self._MethodRoundcountEntry = Entry(f)
+        self._MethodRoundcountEntry.grid(row=3,column=1)
+        self._MethodRoundcount = StringVar()
+        self._MethodRoundcountEntry["textvariable"] = self._MethodRoundcount
+
+        self._MethodAdjustcountEntry = Entry(f)
+        self._MethodAdjustcountEntry.grid(row=4,column=1)
+        self._MethodAdjustcount = StringVar()
+        self._MethodAdjustcountEntry["textvariable"] = self._MethodAdjustcount
+
+        self._MethodAdjustpieceEntry = Entry(f)
+        self._MethodAdjustpieceEntry.grid(row=5,column=1)
+        self._MethodAdjustpiece = StringVar()
+        self._MethodAdjustpieceEntry["textvariable"] = self._MethodAdjustpiece
+
+        self._MethodSheafBox = Combobox(batteryFrame)
+        self._MethodSheafBox.current(0)
+        self._MethodSheafBox.grid(row=6,column=1,sticky="WE")
+
         Label(f, text="METHOD OF CONTROL"   ).grid(row=10,column=0,columnspan=2,sticky="E")
         Label(f, text="Method:"             ).grid(row=11,column=0,sticky="E")
-        Label(f, text="Time from Now:"      ).grid(row=12,column=0,sticky="E")
-        Label(f, text="Clock Time:"         ).grid(row=13,column=0,sticky="E")
+        Label(f, text="Time"      ).grid(row=12,column=0,sticky="E")
 
+        self._ControlMethodBox = Combobox(batteryFrame, values=['Fire when ready','Fire at my command','Time from now','Time on target'])
+        self._ControlMethodBox.current(0)
+        self._ControlMethodBox.grid(row=11,column=1,sticky="WE")
+
+        self._ControlTimeEntry = Entry(f)
+        self._ControlTimeEntry.grid(row=5,column=1)
+        self._ControlTime = StringVar()
+        self._ControlTimeEntry["textvariable"] = self._ControlTime
+
+        
         f = Frame(self._MainFrame)
         f.grid(row=0,column=0)
         self._GridFrame = f
@@ -66,6 +132,28 @@ class AdjustMissionFrame:
         Label(f, text="OT Dir:"                  ).grid(row=1,column=0)
         Label(f, text="Range:"                   ).grid(row=1,column=0)
         Label(f, text="Alt Dif:"                 ).grid(row=1,column=0)
+
+        self._OSelBox.current(0)
+        self._OSelBox.grid(row=1,column=1,sticky="WE")
+        self._OSelBox.bind("<<ComboboxSelected>>", self.Observer_Select)
+
+        self._OCallsignEntry = Entry(f)
+        self._OCallsignEntry.grid(row=2,column=1,sticky="WE")
+        self._OCallsign = StringVar()
+        self._OCallsignEntry["textvariable"] = self._OCallsign
+
+        self._OGridEntry = Entry(f)
+        self._OGridEntry.grid(row=3,column=1,sticky="WE")
+        self._OGrid = StringVar()
+        self._OGridEntry["textvariable"] = self._OGrid
+
+        self._OAltEntry = Entry(f)
+        self._OAltEntry.grid(row=4,column=1,sticky="WE")
+        self._OAlt = StringVar()
+        self._OAltEntry["textvariable"] = self._OAlt
+
+        self._OCommitButton = Button(f, text="Add / Update", command=self.Observer_Commit)
+        self._OCommitButton.grid(row=5,column=1,sticky="WE")
 
 
 
