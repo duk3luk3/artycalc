@@ -18,6 +18,13 @@ class SolutionFrame:
         self._SolutionLabel.grid(row=1,column=1,sticky="NWSE")
         self._SolutionText = StringVar()
         self._SolutionLabel["textvariable"] = self._SolutionText
+        self._SolutionText = "Solution"
+
+        self._SolutionNextButton = Button(f,text="Next Solution")
+        self._SolutionNextButton.grid(row=2,column=1)
+        
+        self._SolutionPrevButton = Button(f,text="Prev Solution")
+        self._SolutionPrevButton.grid(row=2,column=0)
 
 
 class AdjustMissionFrame:
