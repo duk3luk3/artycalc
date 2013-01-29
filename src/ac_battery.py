@@ -1,5 +1,6 @@
 import ac_math as m
 import ac_rangetables as r
+from xml.dom import minidom
 
 class Point:
     def __init__(self, name, grid, alt):
@@ -41,9 +42,43 @@ class Gun:
 
         elev, time = solution(range, dalt, self._table)
 
-       
+def getText(nodelist):
+    rc = []
+    for node in nodelist:
+        if node.nodeType == node.TEXT_NODE:
+            rc.append(node.data)
+    return ''.join(rc) 
+
+def getNodeText(dom, name):
+    return getText(dom.getElementsByTagName(name).childNodes)
 
 class Battery:
-    def __init__(self):
+    def __init__(self, name, callsign, type, grid, alt, lay, tgtpre, tgtstart):
         self._guns = []
+        self._name = name
+        self._callsign = callsign
+        self._type = type
+        self._loc = Point(name, grid, alt)
+        self._tgtpre = tgtpre
+        self._tgtidx = tgtstart
+
+    @classmethod
+    def xml_load(file):
+        dom = minidom.parse(file)
+        name = getNodeText(dom, "name")
+        callsign = getNodeText(dom, "callsign")
+        type = getNodeText(dom, "text")
+        grid = getNodeText(dom, "grid")
+        lay = getNodeText(dom, "lay")
+        tgtpre = getNodeText(dom, "tgtpre")
+        tgtidx = getNodeText(dom, "tgtidx")
+
+        bat = cls(name, callsign, type, grid, alt, lay)
+
+
+
+
+
+
+
   

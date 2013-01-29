@@ -11,20 +11,29 @@ class SolutionFrame:
         f.grid(row=0,column=0,sticky="NESW")
         self._MainFrame = f
 
-        Label(f, text="BATTERY INFORMATION").grid(row=0,column=0,columnspan=2,stick="W")
+        Label(f, text="BATTERY INFORMATION").grid(row=0,column=0,columnspan=2,sticky="W")
 
         
         self._SolutionLabel = Label(f,text="Solution")
         self._SolutionLabel.grid(row=1,column=1,sticky="NWSE")
         self._SolutionText = StringVar()
         self._SolutionLabel["textvariable"] = self._SolutionText
-        self._SolutionText = "Solution"
+        self._SolutionText.set("Solution")
 
         self._SolutionNextButton = Button(f,text="Next Solution")
         self._SolutionNextButton.grid(row=2,column=1)
         
         self._SolutionPrevButton = Button(f,text="Prev Solution")
         self._SolutionPrevButton.grid(row=2,column=0)
+
+        Label(f, text="MESSAGE TO OBSERVER").grid(row=3,column=0,columnspan=2,sticky="W")
+
+        self._MTOLabel = Label(f,text="MTO")
+        self._MTOLabel.grid(row=4,column=1,sticky="NWSE")
+        self._MTOText = StringVar()
+        self._MTOLabel["textvariable"] = self._MTOText
+        self._MTOText.set("MTO")
+
 
 
 class AdjustMissionFrame:
@@ -74,7 +83,6 @@ class AdjustMissionFrame:
         f = Frame(self._MainFrame)
         f.grid(row=0,column=1,rowspan=2,sticky="WE")
         self._MethodFrame = f
-
 
         f.columnconfigure(1, weight=1)
 
@@ -418,7 +426,7 @@ class App:
         self._adjustFrame = AdjustMissionFrame(master, self)
         self._solutionFrame = SolutionFrame(master, self)
 
-        #batteryFrame.lift()
+        batteryFrame.lift()
 
 
 
@@ -483,8 +491,8 @@ class App:
 
         
 
-    def say_hi(self):
-        print "hi there, everyone!"
+    def load(self, file):
+        
 
 root = Tk()
 
