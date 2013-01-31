@@ -10,7 +10,7 @@ def main(argv):
     print "\tThe first column will be used as X coordinate, all other columns as Y coordinates."
     exit(0)
 
-  order = argv[1]
+  order = int(argv[1])
 
   files = argv[2:]
 
@@ -22,32 +22,42 @@ def main(argv):
 
     title = []
     rec = []
-    row = l.split("\t")
+    row = l[0:-1].split("\t")
     if (not isNumber(row[0])):
       title = row
       lno += 1
       l = f.readline()
 
     while l != "":
-      srow = l.split("\t")
+      srow = l[0:-1].split("\t")
       row = []
       for s in srow:
         if (isNumber(s)):
           row.append(float(s))
         else:
-          print "%s:%d - Could not parse \"%s\", skipping sample" % (fn,lno,s)
+          print "%s:%d - Could not parse \"%s\", skipping sample" % (fn,lno+1,s)
           row.append(None)
+      rec.append(row)
       lno += 1
       l = f.readline()
+
+    
 
     ncols = len(rec[0])
     result = []
 
+    print "Result:"
+
     for i in range(1,ncols):
-      xcol = rec[0]
-      ycol = rec[1]
+      try:
+        xcol = map(lambda x: x[0], rec)
+        ycol = map(lambda x: x[i] if len(x)>i else None, rec)
+      except IndexError:
+        print rec
+        raise
       set = zip(xcol, ycol)
       set = filter( lambda x : (x[1] != None), set)
+
 
       r = []
       if len(title) >= i - 1:
@@ -55,9 +65,12 @@ def main(argv):
       else:
         print "Column %d" % (i)
 
+      #print set
       params = findCurve(set, order)
 
-      print params
+      print reduce(lambda x,y: str(x) + "\t" + str(y), params)
+
+      print ""
 
 
 
@@ -160,8 +173,6 @@ def solveLinearSystem(coefficients):
       result.append(coefficients[variableResultRows[i]][n])
     else:
       result.append(None)
-
-  result.reverse()
 
   return result
 
