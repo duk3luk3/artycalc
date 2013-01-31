@@ -28,6 +28,19 @@ def azimuth(a,b):
   if x(a) > x(b):
       az = 2* math.pi - az
   return az
+
+def adjust(coords, ot, add, right, up):
+  x,y,z = coords
+  north = math.cos(ot) * add + math.sin(ot) * right
+  east = math.sin(ot) * add + math.cos(ot) * right
+  return (x+east,y+north,z+up)
+
+def mils(rad):
+  return rad / (2.0 * math.pi) * 6400.0
+
+def rad(mils):
+  return mils * (2.0 * math.pi) / 6400.0
+
 # Quadrant (elevation) and flight time
 def calc(range, dAlt, table):
   rtable, atable, ttable, ltable, r = table

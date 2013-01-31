@@ -1,3 +1,4 @@
+
 import ac_math as m
 import ac_rangetables as r
 from xml.dom import minidom
@@ -42,12 +43,22 @@ class Gun:
 
         elev, time = solution(range, dalt, self._table)
 
+class Mission:
+    def __init__(self, pre, num, coords):
+        self._pre = pre
+        self._num = num
+        self._coords = coords
+
+    def adjust(self, ot, add, right, up):
+        self._coords = m.adjust(self._coords,ot,add,right,up)
+
+
 def getText(nodelist):
     rc = []
     for node in nodelist:
         if node.nodeType == node.TEXT_NODE:
             rc.append(node.data)
-    return ''.join(rc) 
+    return ''.join(rc)
 
 def getNodeText(dom, name):
     return getText(dom.getElementsByTagName(name).childNodes)
@@ -74,6 +85,8 @@ class Battery:
         tgtidx = getNodeText(dom, "tgtidx")
 
         bat = cls(name, callsign, type, grid, alt, lay)
+
+
 
 
 
