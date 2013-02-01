@@ -15,7 +15,7 @@ def main(argv):
   files = argv[2:]
 
   for fn in files:
-    print "Processing file %s..." % (fn)
+    print fn
     f = open(fn)
     lno = 0
     l = f.readline()
@@ -41,11 +41,14 @@ def main(argv):
       lno += 1
       l = f.readline()
 
-    
+    # remove empty lines
+    rec = filter( lambda x: x[0] != None, rec) 
 
     ncols = len(rec[0])
-    result = []
 
+    print "Range Min: %d\tRange Max: %d" % (rec[0][0],rec[-1][0])
+
+    result = []
     print "Result:"
 
     for i in range(1,ncols):
@@ -56,7 +59,7 @@ def main(argv):
         print rec
         raise
       set = zip(xcol, ycol)
-      set = filter( lambda x : (x[1] != None), set)
+      set = filter( lambda x : (x[1] != None and x[0] != None), set)
 
 
       r = []
@@ -70,7 +73,7 @@ def main(argv):
 
       print reduce(lambda x,y: str(x) + "\t" + str(y), params)
 
-      print ""
+    print ""
 
 
 
