@@ -61,20 +61,18 @@ def getText(nodelist):
     return ''.join(rc)
 
 def getNodeText(dom, name):
-    return getText(dom.getElementsByTagName(name).childNodes)
+    return getText(dom.getElementsByTagName(name)[0].childNodes)
 
 class Battery:
-    def __init__(self, name, callsign, type, grid, alt, lay, tgtpre, tgtstart):
-        self._guns = []
-        self._name = name
-        self._callsign = callsign
-        self._type = type
-        self._loc = Point(name, grid, alt)
-        self._tgtpre = tgtpre
-        self._tgtidx = tgtstart
+    def __init__(self, name, callsign, type, grid, alt, lay, line_dir, line_dist, guns, tgtpre, tgtstart):
+        self._info = [name, callsign, type]
+        self._lay = [grid, alt, lay]
+        self._line = [line_dir, line_dist, guns]
+        self._tgtinfo = [tgtpre, tgtstart]
 
     @classmethod
     def xml_load(file):
+        # load basic info
         dom = minidom.parse(file)
         name = getNodeText(dom, "name")
         callsign = getNodeText(dom, "callsign")
@@ -83,15 +81,24 @@ class Battery:
         lay = getNodeText(dom, "lay")
         tgtpre = getNodeText(dom, "tgtpre")
         tgtidx = getNodeText(dom, "tgtidx")
+        line_dir = getNodeText(dom, "line_dir")
+        gunline_guns = getNodeText(dom, "gunline_guns")
+        gunline_dir = getNodeText(dom, "gunline_dir")
+        gunline_dist = getNodeText(dom, "gunline_dist")
 
-        bat = cls(name, callsign, type, grid, alt, lay)
+        bat = cls(name, callsign, type, grid, alt, lay, gunline_dir, gunline_dist, gunline_guns, tgtpre, tgtidx)
+
+        # load missions
+        mnode = dom.getElementsByTagName("missions")[0]
+
+        bat._missions = []
+
+        for n in mnode.childNodes:
+            pre = getNodeText(n, "pre")
+            num = getNodeText(n, "num")
+            coords = getNodeText(n, "coords")
+
+            bat._missions.append(Mission(pre, num, coords))
 
 
-
-
-
-
-
-
-
-  
+        return bat
