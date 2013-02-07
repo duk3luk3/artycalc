@@ -1,4 +1,3 @@
-
 import ac_math as m
 import ac_rangetables as r
 from xml.dom import minidom
