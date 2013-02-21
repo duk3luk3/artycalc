@@ -1,21 +1,29 @@
 import sys
+import os
 import math
-
 
 def main(argv):
   if (len(argv) < 3):
-    print "Usage: %s <order> <files>" % (argv[0])
+    print "Usage: %s <order> <format> <files>" % (argv[0])
     print "\n\tOrder indicates the desired order of the interpolated polynomial."
+    print "\tFormat can be either 'plain' or 'code' to print plain text or array-style output."
     print "\tThe file parser expects an optional tab-separated header line and tab-separated columns."
     print "\tThe first column will be used as X coordinate, all other columns as Y coordinates."
     exit(0)
 
   order = int(argv[1])
 
-  files = argv[2:]
+  format_code = (argv[2] == "code")
+
+  files = argv[3:]
+
+  fullrec = []
 
   for fn in files:
-    print fn
+    if format_code:
+        print codify(fn) + " = ["
+    else:      
+      print fn
     f = open(fn)
     lno = 0
     l = f.readline()
@@ -29,15 +37,21 @@ def main(argv):
       l = f.readline()
 
     while l != "":
-      srow = l[0:-1].split("\t")
-      row = []
-      for s in srow:
-        if (isNumber(s)):
-          row.append(float(s))
-        else:
-          print "%s:%d - Could not parse \"%s\", skipping sample" % (fn,lno+1,s)
-          row.append(None)
-      rec.append(row)
+      #skip empty lines
+      if len(l)>1:
+          srow = l[0:-1].split("\t")
+          row = []
+          for s in srow:
+            if (isNumber(s)):
+              row.append(float(s))
+            else:
+              hashmark = ""
+              if format_code:
+                  hashmark = "# "
+
+              print "%s%s:%d - Could not parse \"%s\", skipping sample" % (hashmark, fn,lno+1,s)
+              row.append(None)
+          rec.append(row)
       lno += 1
       l = f.readline()
 
@@ -46,10 +60,13 @@ def main(argv):
 
     ncols = len(rec[0])
 
-    print "Range Min: %d\tRange Max: %d" % (rec[0][0],rec[-1][0])
+    if format_code:
+        print "# range"
+        print "[ " + str(rec[0][0]) + ", " + str(rec[-1][0]) + "], "
+    else:
+        print "RMin\t%d\tRMax\t%d" % (rec[0][0],rec[-1][0])
 
-    result = []
-    print "Result:"
+    fst = True
 
     for i in range(1,ncols):
       try:
@@ -61,22 +78,29 @@ def main(argv):
       set = zip(xcol, ycol)
       set = filter( lambda x : (x[1] != None and x[0] != None), set)
 
-
-      r = []
+      t = ""
       if len(title) >= i - 1:
-        print title[i]
+        t = title[i]
       else:
-        print "Column %d" % (i)
+        t = "Column %d" % (i)
 
       #print set
       params = findCurve(set, order)
 
-      print reduce(lambda x,y: str(x) + "\t" + str(y), params)
+      if format_code:
+          pre = ","
+          if fst:
+              pre = ""
+              fst = False
+          print pre + "[ \"" + t + "\", [" + reduce(lambda x,y: str(x)+", " + str(y), params) + "] ]"
+      else:
+          print t + "\t" + reduce(lambda x,y: str(x) + "\t" + str(y), params)
 
-    print ""
+    if format_code:
+        print "]"
 
-
-
+def codify(s):
+  return os.path.basename(s)
 
 def isNumber(s):
   try:

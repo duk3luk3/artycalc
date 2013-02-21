@@ -276,6 +276,9 @@ class App:
 
         master.title("A/N GYK 37")
 
+        ## init classes
+        self._battery = B.Battery()
+
         ##Style().configure('TFrame.border', background="black")
 
         ## Battery Main Frame
@@ -305,6 +308,12 @@ class App:
         self._bCallsignEntry.grid(row=1,column=1,sticky="WE")
         self._bCallsign = StringVar()
         self._bCallsignEntry["textvariable"] = self._bCallsign
+
+        self._bLoadButton = Button(batteryFrame,text="Load...",command=self.LoadButtonClick)
+        self._bLoadButton.grid(row=1,column=2)
+
+        self._bSaveButton = Button(batteryFrame,text="Save...",command=self.SaveButtonClick)
+        self._bSaveButton.grid(row=2,column=2)
 
         self._bTypeEntry = Entry(batteryFrame)
         self._bTypeEntry.grid(row=2,column=1,sticky="WE")
@@ -436,8 +445,11 @@ class App:
         master.rowconfigure(1, weight=1)
         master.columnconfigure(0,weight=1)
 
+    def LoadButtonClick(self):
+        print "Load Button"
 
-
+    def SaveButtonClick(self):
+        print "Save Button"
 
     def Observer_Select(self, event):
         if self._OSelBox.current() == 0:
@@ -491,7 +503,7 @@ class App:
 
         
 
-    def load(self, file):
+    #def load(self, file):
         
 
 root = Tk()

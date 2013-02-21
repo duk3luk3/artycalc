@@ -1,45 +1,57 @@
+import rangetable_data as data
+
+stamp = [ '1361483964', 'Thu Feb 21 22:59:24 CET 2013', '1.13']
+
 guns = [
-    [ 'M252','60mm mortar',
+    [ 'M224','60mm mortar',
         [
         'HE', [ 'Impact Fuze', 'Proximity Burst', 'Near-Surface Burst' ],
-            [ # charge 0
-                [ 1510.2500000,  -0.040499999999995,  -0.003725], # elev
-                [ 69.0000000,    -0.7800000,   0.0026000], # elev adjustment
-                [ 12.1000000,    0.0106000,   -0.0000400], # time
-                [ 2.1000000,     -0.0081000,   0.0000250], # time adjustment
-                [ 100.0, 400.0 ]  # range
-            ],
-            [ # charge 1
-                [ 1527.0626873127, -0.08121128871129, -0.00024607892107892], # elev
-                [ 30.017232767233, -0.095546953046953, 0.00008469030969031], # delev
-                [ 23.259190809191, 0.0045789210789211, -0.0000051698301698302], # time
-                [ 1.3322427572428, -0.0018533966033966, 0.0000015859140859141], #dtime
-                [ 300.0, 1400.0 ]            
-            ],
-            [ #charge 2
-                [ 1543.3083591331, -0.079882352941178, -0.000087616099071207], # elev
-                [ 15.07232787852, -0.031585876455846, 0.000019010762199617], # delev
-                [ 33.705743771193, -0.0053357216570839, 0.0000014462627156126], #time
-                [ 1.0691198584697,-0.00090768096712369, 0.00000048945894147133], #dtime
-                [ 400.0, 2200.0 ]
-            ],
-            [ #charge 3
-                [ 1512.4059197324, -0.011929096989968, -0.000076722408026756], # elev
-                [ 30.358850714503, -0.052161872909699, 0.000021356035269079],  # delev
-                [ 32.735334296139, 0.0038851003344481, -0.0000021603070842201], # time
-                [ 1.2853581635756, -0.001258762541806, 0.00000051793858315597], # dtime
-                [ 500.0, 2800.0 ]
-            ],
-            [ #charge 4
-                [ 1507.7896180942, -0.0082717304941989, -0.000048715503999153], # elev
-                [ 24.517463848721, -0.032059272207214,  0.000010273319561417],  # delev
-                [ 39.897733283896, -0.00054512421208747, -0.00000040715433373943], # time
-                [ 1.3612730194043, -0.0010628687960167, 0.00000032425799389092], # dtime
-                [ 700.0, 3500.0 ]
-            ]
-
-
+            data.m224_60mm_HE_Charge0,
+            data.m224_60mm_HE_Charge1,
+            data.m224_60mm_HE_Charge2,
+            data.m224_60mm_HE_Charge3,
+            data.m224_60mm_HE_Charge4
+        ],
+        [
+        'WP', [ 'Impact Fuze', 'Proximity Burst', 'Near-Surface Burst' ],
+            data.m224_60mm_WP_Charge0,
+            data.m224_60mm_WP_Charge1,
+            data.m224_60mm_WP_Charge2,
+            data.m224_60mm_WP_Charge3,
+            data.m224_60mm_WP_Charge4
+        ],
+        [
+        'Illum', [ 'Time fuze' ],
+            data.m224_60mm_Illum_Charge1,
+            data.m224_60mm_Illum_Charge2,
+            data.m224_60mm_Illum_Charge3,
+            data.m224_60mm_Illum_Charge4
         ]
 
+    ],
+    [ 'M252','81mm mortar',
+        [
+        'HE', [ 'Impact Fuze', 'Proximity Burst', 'Near-Surface Burst' ],
+            data.m252_81mm_HE_Charge0,
+            data.m252_81mm_HE_Charge1,
+            data.m252_81mm_HE_Charge2,
+            data.m252_81mm_HE_Charge3,
+            data.m252_81mm_HE_Charge4
+        ],
+        [
+        'WP', [ 'Impact Fuze', 'Proximity Burst', 'Near-Surface Burst' ],
+            data.m252_81mm_WP_Charge0,
+            data.m252_81mm_WP_Charge1,
+            data.m252_81mm_WP_Charge2,
+            data.m252_81mm_WP_Charge3,
+            data.m252_81mm_WP_Charge4
+        ],
+        [
+        'Illum', [ 'Time fuze' ],
+            data.m252_81mm_Illum_Charge1,
+            data.m252_81mm_Illum_Charge2,
+            data.m252_81mm_Illum_Charge3,
+            data.m252_81mm_Illum_Charge4
+        ]
     ]
 ]
