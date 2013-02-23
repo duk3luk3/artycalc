@@ -1,6 +1,7 @@
 from Tkinter import *
 from ttk import *
 import ac_battery as B
+import ac_rangetables as R
 
 class SolutionFrame:
     def __init__(self, master, controller):
@@ -303,11 +304,13 @@ class App:
         self._bNameEntry.grid(row=0,column=1,sticky="WE")
         self._bName = StringVar()
         self._bNameEntry["textvariable"] = self._bName
+        self._bName.trace("w", self.BatteryNameChange)
 
         self._bCallsignEntry = Entry(batteryFrame)
         self._bCallsignEntry.grid(row=1,column=1,sticky="WE")
         self._bCallsign = StringVar()
         self._bCallsignEntry["textvariable"] = self._bCallsign
+        self._bCallsign.trace("w", self.BatteryCallsignChange)
 
         self._bLoadButton = Button(batteryFrame,text="Load...",command=self.LoadButtonClick)
         self._bLoadButton.grid(row=1,column=2)
@@ -315,10 +318,10 @@ class App:
         self._bSaveButton = Button(batteryFrame,text="Save...",command=self.SaveButtonClick)
         self._bSaveButton.grid(row=2,column=2)
 
-        self._bTypeEntry = Entry(batteryFrame)
-        self._bTypeEntry.grid(row=2,column=1,sticky="WE")
-        self._bType = StringVar()
-        self._bTypeEntry["textvariable"] = self._bType
+        self._bTypeBox = Combobox(batteryFrame, values = R.gun_names())
+        self._bTypeBox.current(0)
+        self._bTypeBox.grid(row=2,column=1,sticky="WE")
+        self._bTypeBox.bind("<<ComboboxSelected>>", self.BatteryType_Select)
         
         self._bGridEntry = Entry(batteryFrame)
         self._bGridEntry.grid(row=3,column=1,sticky="WE")
@@ -438,18 +441,28 @@ class App:
         batteryFrame.lift()
 
 
-
-
         ## resizing
 
         master.rowconfigure(1, weight=1)
         master.columnconfigure(0,weight=1)
+
+        ## logic
+
+    def BatteryNameChange(self, *args):
+        self._battery._info[0] = self._bName.get()
+
+    def BatteryCallsignChange(self, *args):
+        self._battery._info[1] = self._bCallsign.get()
+
+    def BatteryType_Select(self, event):
+        self._battery._info[2] = R.guns.keys()[self._bTypeBox.current()]
 
     def LoadButtonClick(self):
         print "Load Button"
 
     def SaveButtonClick(self):
         print "Save Button"
+
 
     def Observer_Select(self, event):
         if self._OSelBox.current() == 0:

@@ -68,11 +68,9 @@ def addText(dom, name, val):
     dom.appendChild(elem)
     elem.appendChild(text)
 
-class Ballistics:
-    def __init__(self, files):
 
 class Battery:
-    def __init__(self, name="", callsign="", type=None, grid="", alt=0, lay=0, line_dir=0, line_dist=0, guns=0, tgtpre="", tgtstart=0):
+    def __init__(self, name="", callsign="", type="", grid="", alt=0, lay=0, line_dir=0, line_dist=0, guns=0, tgtpre="", tgtstart=0):
         self._info = [name, callsign, type]
         self._lay = [grid, alt, lay]
         self._line = [line_dir, line_dist, guns]
@@ -104,8 +102,6 @@ class Battery:
         f.write(xml)
         f.close()
 
-
-
     @classmethod
     def xml_load(file):
         # load basic info
@@ -120,7 +116,7 @@ class Battery:
         lay = getNodeText(dom, "lay")
 
         tgtpre = getNodeText(dom, "tgtpre")
-        tgtidx = (int)getNodeText(dom, "tgtidx")
+        tgtidx = int(getNodeText(dom, "tgtidx"))
 
         gunline_guns = getNodeText(dom, "gunline_guns")
         gunline_dir = getNodeText(dom, "gunline_dir")
