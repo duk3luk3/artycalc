@@ -3,7 +3,7 @@ import rangetable_data as data
 stamp = [ '1361483964', 'Thu Feb 21 22:59:24 CET 2013', '1.13']
 
 guns = {
-    'm224':[ 'M224','60mm mortar',
+    'M224 60mm mortar':[ 'M224','60mm mortar',
         [
         'HE', [ 'Impact Fuze', 'Proximity Burst', 'Near-Surface Burst' ],
             data.m224_60mm_HE_Charge0,
@@ -29,7 +29,7 @@ guns = {
         ]
 
     ],
-    'm252':[ 'M252','81mm mortar',
+    'M252 81mm mortar':[ 'M252','81mm mortar',
         [
         'HE', [ 'Impact Fuze', 'Proximity Burst', 'Near-Surface Burst' ],
             data.m252_81mm_HE_Charge0,
@@ -55,10 +55,3 @@ guns = {
         ]
     ]
 }
-
-def gun_names():
-  ret = []
-  for k, v in guns.iteritems():
-      ret.append("%s (%s)" % (v[0],v[1]))
-  return ret
-

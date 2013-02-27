@@ -5,25 +5,23 @@ from xml.dom import minidom
 class Point:
     def __init__(self, name, grid, alt):
         print "New Point: %s %s %s" % (name, grid, alt)
+        self.setGrid(grid)
+        self.setAlt(alt)
+        print "%s - %s, %s" % (self._xcoord, self._ycoord, self._altitude)
 
+    def setGrid(self, grid):
         # verify grid
         l = len(grid)
         if not l in (4,6,8,10):
             raise ValueError("Grid %s not 4,6,8, or 10-digit grid" % (grid))
-        
         l = l/2
-
         self._xcoord = int(grid[0:l])
         self._ycoord = int(grid[l:l+l])
-        self._altitude = int(alt)
-
-        print "%s - %s, %s" % (self._xcoord, self._ycoord, self._altitude)
-
         if self._xcoord < 0 or self._ycoord < 0:
             raise "Negative Coords not supported"
 
-        self._name = name
-        self._grid = grid
+    def setAlt(self, alt):
+        self._altitude = float(alt)
         self._alt = alt
 
 
@@ -70,11 +68,32 @@ def addText(dom, name, val):
 
 
 class Battery:
-    def __init__(self, name="", callsign="", type="", grid="", alt=0, lay=0, line_dir=0, line_dist=0, guns=0, tgtpre="", tgtstart=0):
+    def __init__(self, name="", callsign="", type="", coords=None, lay=0, line_dir=0, line_dist=0, guns=0, tgtpre="", tgtstart=0):
         self._info = [name, callsign, type]
-        self._lay = [grid, alt, lay]
+        self._lay = [coords, lay]
         self._line = [line_dir, line_dist, guns]
         self._tgtinfo = [tgtpre, tgtstart]
+
+    def setName(self, name):
+        self._info[0] = name
+        print "Battery name set to %s" % (name)
+
+    def setCallsign(self,name):
+        self._info[1] = name
+        print "Battery callsign set to %s" % (name)
+
+    def setType(self, type):
+        self._info[2] = type
+        print "Battery type set to %s" % (type)
+
+    def setGrid(self, grid):
+        self._lay[0].setGrid(grid)
+
+    def setAlt(self, alt):
+        self._lay[0].setAlt(alt)
+
+    def setLay(self, lay):
+        self._lay[1] = lay
 
     def xml_save(file):
         doc = minidom.getDOMImplementation.createDocument(None, "battery", None)
@@ -85,9 +104,9 @@ class Battery:
         addText(dom, "callsign", self._info[1])
         addText(dom, "type", self._info[2])
 
-        addText(dom, "grid", self._lay[0])
-        addText(dom, "alt", self._lay[1])
-        addText(dom, "lay", self._lay[2])
+        addText(dom, "grid", self._lay[0]._grid)
+        addText(dom, "alt", self._lay[0]._alt)
+        addText(dom, "lay", self._lay[1])
 
         addText(dom, "gunline_dir", self._line[0])
         addText(dom, "gunline_dist", self._line[1])
@@ -122,7 +141,9 @@ class Battery:
         gunline_dir = getNodeText(dom, "gunline_dir")
         gunline_dist = getNodeText(dom, "gunline_dist")
 
-        bat = cls(name, callsign, type, grid, alt, lay, gunline_dir, gunline_dist, gunline_guns, tgtpre, tgtidx)
+        c = Point("",grid,alt)
+
+        bat = cls(name, callsign, type, c, lay, gunline_dir, gunline_dist, gunline_guns, tgtpre, tgtidx)
 
         # load missions
         #mnode = dom.getElementsByTagName("missions")[0]
