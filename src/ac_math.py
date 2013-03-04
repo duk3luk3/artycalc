@@ -41,6 +41,33 @@ def mils(rad):
 def rad(mils):
   return mils * (2.0 * math.pi) / 6400.0
 
+def rad_from_deg(deg):
+  return deg * (2.0 * math.pi) / 360.0
+
+def angle(a):
+  try:
+    return rad(float(a))
+  except ValueError:
+    if isinstance ( a , str):
+      v = float(a[0:-1])
+      d = a[-1]
+      if d == 'd':
+        return rad_from_deg(float(v))
+      elif d == 'm':
+        return rad(float(v))
+      else:
+        raise ValueError("No valid unit denotated in angle string %s" % (a))
+    else:
+      raise TypeError("angle function expects floatable value or string, got " + str(type(a)))
+
+def is_angle(a):
+  try:
+    angle(a)
+    return True
+  except:
+    return False
+    
+
 # Quadrant (elevation) and flight time
 def calc(range, dAlt, table):
   rtable, atable, ttable, ltable, r = table

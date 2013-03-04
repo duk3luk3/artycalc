@@ -3,7 +3,7 @@ import ac_rangetables as r
 from xml.dom import minidom
 
 class Point:
-    def __init__(self, name, grid, alt):
+    def __init__(self, name="", grid="0000", alt=0):
         print "New Point: %s %s %s" % (name, grid, alt)
         self.setGrid(grid)
         self.setAlt(alt)
@@ -68,7 +68,7 @@ def addText(dom, name, val):
 
 
 class Battery:
-    def __init__(self, name="", callsign="", type="", coords=None, lay=0, line_dir=0, line_dist=0, guns=0, tgtpre="", tgtstart=0):
+    def __init__(self, name="", callsign="", type="", coords=Point(), lay=0, line_dir=0, line_dist=0, guns=0, tgtpre="", tgtstart=0):
         self._info = [name, callsign, type]
         self._lay = [coords, lay]
         self._line = [line_dir, line_dist, guns]
@@ -93,7 +93,25 @@ class Battery:
         self._lay[0].setAlt(alt)
 
     def setLay(self, lay):
+        a = angle(lay)
         self._lay[1] = lay
+
+    def setLinedir(self, dir):
+        a = angle(dir)
+        self._line[0] = dir
+
+    def setLinedist(self, dist):
+        self._line[1] = float(dist)
+
+    def setLineguns(self, guns):
+        self._line[2] = int(guns)
+
+    def setPrefix(self, pre):
+        self._tgtinfo[0] = pre
+
+    def setOffset(self, off):
+        self._tgtinfo[1] = int(off)
+
 
     def xml_save(file):
         doc = minidom.getDOMImplementation.createDocument(None, "battery", None)

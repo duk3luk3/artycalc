@@ -2,271 +2,321 @@
 
 from Tkinter import *
 from ttk import *
+#import tkMessageBox
 import ac_battery as B
 import ac_rangetables as R
+import sys
+from functools import partial
+
+
+# wrappers
+
+def BoxWrapped(f, msg="Invalid input"):
+  try:
+    return f()
+  except:
+		#tkMessageBox.showerror(msg, sys.exc_info()[0])
+		print "Nothing"
+
+def BranchWrapped(f, success, fail):
+	try:
+		r = f()
+		print "success"
+		success()
+		return r
+	except Exception as inst:
+		fail()
+		print "fail"
+		print inst
+
+def ApplyStyle(w,s):
+	w['style']=s
+	print w['style']
+
+NormalStyle = lambda w: ApplyStyle(w,'TEntry')
+InvalidStyle = lambda w: ApplyStyle(w, 'Invalid.TEntry')
+inv = lambda x: InvalidStyle(x)
+val = lambda x: NormalStyle(x)
+
+# frames
 
 class SolutionFrame:
-    def __init__(self, master, controller):
-        self._root = master
-        self._controller = controller
+	def __init__(self, master, controller):
+		self._root = master
+		self._controller = controller
 
-        f = Frame(master)
-        f.grid(row=0,column=0,sticky="NESW")
-        self._MainFrame = f
+		f = Frame(master)
+		f.grid(row=0,column=0,sticky="NESW")
+		self._MainFrame = f
 
-        Label(f, text="BATTERY INFORMATION").grid(row=0,column=0,columnspan=2,sticky="W")
+		Label(f, text="BATTERY INFORMATION").grid(row=0,column=0,columnspan=2,sticky="W")
 
-        
-        self._SolutionLabel = Label(f,text="Solution")
-        self._SolutionLabel.grid(row=1,column=1,sticky="NWSE")
-        self._SolutionText = StringVar()
-        self._SolutionLabel["textvariable"] = self._SolutionText
-        self._SolutionText.set("Solution")
+		
+		self._SolutionLabel = Label(f,text="Solution")
+		self._SolutionLabel.grid(row=1,column=1,sticky="NWSE")
+		self._SolutionText = StringVar()
+		self._SolutionLabel["textvariable"] = self._SolutionText
+		self._SolutionText.set("Solution")
 
-        self._SolutionNextButton = Button(f,text="Next Solution")
-        self._SolutionNextButton.grid(row=2,column=1)
-        
-        self._SolutionPrevButton = Button(f,text="Prev Solution")
-        self._SolutionPrevButton.grid(row=2,column=0)
+		self._SolutionNextButton = Button(f,text="Next Solution")
+		self._SolutionNextButton.grid(row=2,column=1)
+		
+		self._SolutionPrevButton = Button(f,text="Prev Solution")
+		self._SolutionPrevButton.grid(row=2,column=0)
 
-        Label(f, text="MESSAGE TO OBSERVER").grid(row=3,column=0,columnspan=2,sticky="W")
+		Label(f, text="MESSAGE TO OBSERVER").grid(row=3,column=0,columnspan=2,sticky="W")
 
-        self._MTOLabel = Label(f,text="MTO")
-        self._MTOLabel.grid(row=4,column=1,sticky="NWSE")
-        self._MTOText = StringVar()
-        self._MTOLabel["textvariable"] = self._MTOText
-        self._MTOText.set("MTO")
+		self._MTOLabel = Label(f,text="MTO")
+		self._MTOLabel.grid(row=4,column=1,sticky="NWSE")
+		self._MTOText = StringVar()
+		self._MTOLabel["textvariable"] = self._MTOText
+		self._MTOText.set("MTO")
 
 
 
 class AdjustMissionFrame:
-    def __init__(self, master, controller):
-        self._root = master;
-        self._controller = controller
+	def __init__(self, master, controller):
+		self._root = master;
+		self._controller = controller
 
-        f = Frame(master)
-        f.grid(row=0,column=0,sticky="NESW")
-        self._MainFrame = f
+		f = Frame(master)
+		f.grid(row=0,column=0,sticky="NESW")
+		self._MainFrame = f
 
-        f.columnconfigure(0, weight=1)
-        f.columnconfigure(1, weight=1)
+		f.columnconfigure(0, weight=1)
+		f.columnconfigure(1, weight=1)
 
-        f = Frame(self._MainFrame)
-        f.grid(row=1,column=0, sticky="WE")
-        self._TargetFrame = f
+		f = Frame(self._MainFrame)
+		f.grid(row=1,column=0, sticky="WE")
+		self._TargetFrame = f
 
-        f.columnconfigure(1, weight=1)
+		f.columnconfigure(1, weight=1)
 
-        Label(f, text="TARGET DESCRIPTION").grid(row=0,column=0,columnspan=2,sticky="W")
-        Label(f, text="Target Des:"       ).grid(row=1,column=0,sticky="E")
-        Label(f, text="Radius / Width:"   ).grid(row=4,column=0,sticky="E")
-        Label(f, text="Length:"           ).grid(row=5,column=0,sticky="E")
-        Label(f, text="Attitude:"         ).grid(row=6,column=0,sticky="E")
+		Label(f, text="TARGET DESCRIPTION").grid(row=0,column=0,columnspan=2,sticky="W")
+		Label(f, text="Target Des:"       ).grid(row=1,column=0,sticky="E")
+		Label(f, text="Radius / Width:"   ).grid(row=4,column=0,sticky="E")
+		Label(f, text="Length:"           ).grid(row=5,column=0,sticky="E")
+		Label(f, text="Attitude:"         ).grid(row=6,column=0,sticky="E")
 
-        self._TargetDesEntry = Entry(f)
-        self._TargetDesEntry.grid(row=1,column=1,rowspan=3,sticky="WE")
-        self._TargetDes = StringVar()
-        self._TargetDesEntry["textvariable"] = self._TargetDes
+		self._TargetDesEntry = Entry(f)
+		self._TargetDesEntry.grid(row=1,column=1,rowspan=3,sticky="WE")
+		self._TargetDes = StringVar()
+		self._TargetDesEntry["textvariable"] = self._TargetDes
 
-        self._TargetExtEntry = Entry(f)
-        self._TargetExtEntry.grid(row=4,column=1,sticky="WE")
-        self._TargetExtent = StringVar()
-        self._TargetExtEntry["textvariable"] = self._TargetExtent
+		self._TargetExtEntry = Entry(f)
+		self._TargetExtEntry.grid(row=4,column=1,sticky="WE")
+		self._TargetExtent = StringVar()
+		self._TargetExtEntry["textvariable"] = self._TargetExtent
 
-        self._TargetLengthEntry = Entry(f)
-        self._TargetLengthEntry.grid(row=5,column=1,sticky="WE")
-        self._TargetLength = StringVar()
-        self._TargetLengthEntry["textvariable"] = self._TargetLength
+		self._TargetLengthEntry = Entry(f)
+		self._TargetLengthEntry.grid(row=5,column=1,sticky="WE")
+		self._TargetLength = StringVar()
+		self._TargetLengthEntry["textvariable"] = self._TargetLength
 
-        self._TargetAttitudeEntry = Entry(f)
-        self._TargetAttitudeEntry.grid(row=6,column=1,sticky="WE")
-        self._TargetAttitude = StringVar()
-        self._TargetAttitudeEntry["textvariable"] = self._TargetAttitude
+		self._TargetAttitudeEntry = Entry(f)
+		self._TargetAttitudeEntry.grid(row=6,column=1,sticky="WE")
+		self._TargetAttitude = StringVar()
+		self._TargetAttitudeEntry["textvariable"] = self._TargetAttitude
 
-        f = Frame(self._MainFrame)
-        f.grid(row=0,column=1,rowspan=2,sticky="WE")
-        self._MethodFrame = f
+		f = Frame(self._MainFrame)
+		f.grid(row=0,column=1,rowspan=2,sticky="WE")
+		self._MethodFrame = f
 
-        f.columnconfigure(1, weight=1)
+		f.columnconfigure(1, weight=1)
 
-        Label(f, text="METHOD OF ENGAGEMENT").grid(row=0,column=0,columnspan=2,sticky="W")
-        Label(f, text="Danger Close:"       ).grid(row=1,column=0,sticky="E")
-        Label(f, text="Notes:"              ).grid(row=2,column=0,sticky="E")
-        Label(f, text="Ammunition:"         ).grid(row=5,column=0,sticky="E")
-        Label(f, text="Fuze:"               ).grid(row=6,column=0,sticky="E")
-        Label(f, text="Fuze-Time:"          ).grid(row=7,column=0,sticky="E")
-        Label(f, text="Round Count:"        ).grid(row=8,column=0,sticky="E")
-        Label(f, text="Adj. Round Count:"   ).grid(row=9,column=0,sticky="E")
-        Label(f, text="Adjust Piece:"       ).grid(row=10,column=0,sticky="E")
-        Label(f, text="Sheaf:"              ).grid(row=11,column=0,sticky="E")
+		Label(f, text="METHOD OF ENGAGEMENT").grid(row=0,column=0,columnspan=2,sticky="W")
+		Label(f, text="Danger Close:"       ).grid(row=1,column=0,sticky="E")
+		Label(f, text="Notes:"              ).grid(row=2,column=0,sticky="E")
+		Label(f, text="Ammunition:"         ).grid(row=5,column=0,sticky="E")
+		Label(f, text="Fuze:"               ).grid(row=6,column=0,sticky="E")
+		Label(f, text="Fuze-Time:"          ).grid(row=7,column=0,sticky="E")
+		Label(f, text="Round Count:"        ).grid(row=8,column=0,sticky="E")
+		Label(f, text="Adj. Round Count:"   ).grid(row=9,column=0,sticky="E")
+		Label(f, text="Adjust Piece:"       ).grid(row=10,column=0,sticky="E")
+		Label(f, text="Sheaf:"              ).grid(row=11,column=0,sticky="E")
 
-        self._MethodDangercloseBox = Checkbutton(f, text="Yes")
-        self._MethodDangercloseBox.grid(row=1,column=1,sticky="WE")
-        self._MethodDangerclose = IntVar()
-        self._MethodDangercloseBox["variable"] = self._MethodDangerclose
+		self._MethodDangercloseBox = Checkbutton(f, text="Yes")
+		self._MethodDangercloseBox.grid(row=1,column=1,sticky="WE")
+		self._MethodDangerclose = IntVar()
+		self._MethodDangercloseBox["variable"] = self._MethodDangerclose
 
-        self._MethodNotesEntry = Entry(f)
-        self._MethodNotesEntry.grid(row=2,column=1,columnspan=3,sticky="WE")
-        self._MethodNotes = StringVar()
-        self._MethodNotesEntry["textvariable"] = self._MethodNotes
+		self._MethodNotesEntry = Entry(f)
+		self._MethodNotesEntry.grid(row=2,column=1,columnspan=3,sticky="WE")
+		self._MethodNotes = StringVar()
+		self._MethodNotesEntry["textvariable"] = self._MethodNotes
 
-        self._MethodAmmunitionBox = Combobox(f)
-        ##self._MethodAmmunitionBox.current(0)
-        self._MethodAmmunitionBox.grid(row=5,column=1,sticky="WE")
+		self._MethodAmmunitionBox = Combobox(f)
+		##self._MethodAmmunitionBox.current(0)
+		self._MethodAmmunitionBox.grid(row=5,column=1,sticky="WE")
 
-        self._MethodFuzeBox = Combobox(f)
-        ##self._MethodFuzeBox.current(0)
-        self._MethodFuzeBox.grid(row=6,column=1,sticky="WE")
-        
-        self._MethodFuzetimeEntry = Entry(f)
-        self._MethodFuzetimeEntry.grid(row=7,column=1,sticky="WE")
-        self._MethodFuzetime = StringVar()
-        self._MethodFuzetimeEntry["textvariable"] = self._MethodFuzetime
+		self._MethodFuzeBox = Combobox(f)
+		##self._MethodFuzeBox.current(0)
+		self._MethodFuzeBox.grid(row=6,column=1,sticky="WE")
+		
+		self._MethodFuzetimeEntry = Entry(f)
+		self._MethodFuzetimeEntry.grid(row=7,column=1,sticky="WE")
+		self._MethodFuzetime = StringVar()
+		self._MethodFuzetimeEntry["textvariable"] = self._MethodFuzetime
 
-        self._MethodRoundcountEntry = Entry(f)
-        self._MethodRoundcountEntry.grid(row=8,column=1,sticky="WE")
-        self._MethodRoundcount = StringVar()
-        self._MethodRoundcountEntry["textvariable"] = self._MethodRoundcount
+		self._MethodRoundcountEntry = Entry(f)
+		self._MethodRoundcountEntry.grid(row=8,column=1,sticky="WE")
+		self._MethodRoundcount = StringVar()
+		self._MethodRoundcountEntry["textvariable"] = self._MethodRoundcount
 
-        self._MethodAdjustcountEntry = Entry(f)
-        self._MethodAdjustcountEntry.grid(row=9,column=1,sticky="WE")
-        self._MethodAdjustcount = StringVar()
-        self._MethodAdjustcountEntry["textvariable"] = self._MethodAdjustcount
+		self._MethodAdjustcountEntry = Entry(f)
+		self._MethodAdjustcountEntry.grid(row=9,column=1,sticky="WE")
+		self._MethodAdjustcount = StringVar()
+		self._MethodAdjustcountEntry["textvariable"] = self._MethodAdjustcount
 
-        self._MethodAdjustpieceEntry = Entry(f)
-        self._MethodAdjustpieceEntry.grid(row=10,column=1,sticky="WE")
-        self._MethodAdjustpiece = StringVar()
-        self._MethodAdjustpieceEntry["textvariable"] = self._MethodAdjustpiece
+		self._MethodAdjustpieceEntry = Entry(f)
+		self._MethodAdjustpieceEntry.grid(row=10,column=1,sticky="WE")
+		self._MethodAdjustpiece = StringVar()
+		self._MethodAdjustpieceEntry["textvariable"] = self._MethodAdjustpiece
 
-        self._MethodSheafBox = Combobox(f)
-        ##self._MethodSheafBox.current(0)
-        self._MethodSheafBox.grid(row=11,column=1,sticky="WE")
+		self._MethodSheafBox = Combobox(f, values=["Parallel", "Point", "Target Line", "Target Area"])
+		##self._MethodSheafBox.current(0)
+		self._MethodSheafBox.grid(row=11,column=1,sticky="WE")
 
-        Label(f, text="METHOD OF CONTROL"   ).grid(row=12,column=0,columnspan=2,sticky="W")
-        Label(f, text="Method:"             ).grid(row=13,column=0,sticky="E")
-        Label(f, text="Time"                ).grid(row=14,column=0,sticky="E")
+		Label(f, text="METHOD OF CONTROL"   ).grid(row=12,column=0,columnspan=2,sticky="W")
+		Label(f, text="Method:"             ).grid(row=13,column=0,sticky="E")
+		Label(f, text="Time"                ).grid(row=14,column=0,sticky="E")
 
-        self._ControlMethodBox = Combobox(f, values=['Fire when ready','Fire at my command','Time from now','Time on target'])
-        self._ControlMethodBox.current(0)
-        self._ControlMethodBox.grid(row=13,column=1,sticky="WE")
+		self._ControlMethodBox = Combobox(f, values=['Fire when ready','Fire at my command','Time from now','Time on target'])
+		self._ControlMethodBox.current(0)
+		self._ControlMethodBox.grid(row=13,column=1,sticky="WE")
 
-        self._ControlTimeEntry = Entry(f)
-        self._ControlTimeEntry.grid(row=14,column=1,sticky="WE")
-        self._ControlTime = StringVar()
-        self._ControlTimeEntry["textvariable"] = self._ControlTime
+		self._ControlTimeEntry = Entry(f)
+		self._ControlTimeEntry.grid(row=14,column=1,sticky="WE")
+		self._ControlTime = StringVar()
+		self._ControlTimeEntry["textvariable"] = self._ControlTime
 
-        self._CommitMissionButton = Button(f, text="Adjust Fire")
-        self._CommitMissionButton.grid(row=15,column=1)
-        
-        self._CancelMissionButton = Button(f, text="Cancel")
-        self._CancelMissionButton.grid(row=15,column=0)
+		self._CommitMissionButton = Button(f, text="Adjust Fire")
+		self._CommitMissionButton.grid(row=15,column=1)
+		
+		self._CancelMissionButton = Button(f, text="Cancel")
+		self._CancelMissionButton.grid(row=15,column=0)
 
-        # Grid mission
-        
-        f = Frame(self._MainFrame)
-        f.grid(row=0,column=0,sticky="NWSE")
-        self._GridFrame = f
+		# Grid mission
+		
+		f = Frame(self._MainFrame)
+		f.grid(row=0,column=0,sticky="NWSE")
+		self._GridFrame = f
 
-        f.columnconfigure(1, weight=1)
+		f.columnconfigure(1, weight=1)
 
-        Label(f, text="MISSION GRID REFERENCE").grid(row=0,column=0,columnspan=2)
-        Label(f, text="Grid:").grid(row=1,column=0)
-        Label(f, text="Alt:").grid(row=2,column=0)
+		Label(f, text="MISSION GRID REFERENCE").grid(row=0,column=0,columnspan=2)
+		Label(f, text="Grid:").grid(row=1,column=0)
+		Label(f, text="Alt:").grid(row=2,column=0)
 
-        # Polar mission
+		self._GGridEntry = Entry(f)
+		self._GGridEntry.grid(row=1,column=1, sticky="WE")
+		self._GGrid = StringVar()
+		self._GGridEntry["textvariable"] = Self._GGrid
 
-        f = Frame(self._MainFrame)
-        f.grid(row=0,column=0,sticky="NWSE")
-        self._PolarFrame = f
+		self._GAltEntry = Entry(f)
+		self._GAltEntry.grid(row=2,column=1, sticky="WE")
+		self._GAlt = StringVar()
+		self._GAltEntry["textvariable"] = Self._GAlt
 
-        Label(f, text="MISSION POLAR COORDINATES").grid(row=0,column=0,columnspan=2)
-        Label(f, text="Select:"                  ).grid(row=1,column=0)
-        Label(f, text="Observer:"                ).grid(row=2,column=0)
-        Label(f, text="Observer Grid:"           ).grid(row=3,column=0)
-        Label(f, text="Observer Alt:"            ).grid(row=4,column=0)
-        Label(f, text="OT Dir:"                  ).grid(row=5,column=0)
-        Label(f, text="Range:"                   ).grid(row=6,column=0)
-        Label(f, text="Alt Dif:"                 ).grid(row=7,column=0)
+		# Polar mission
 
-        self._POSelBox = Combobox(f)
-        ##self._POSelBox.current(0)
-        self._POSelBox.grid(row=1,column=1,sticky="WE")
-        #self._POSelBox.bind("<<ComboboxSelected>>", self.Observer_Select)
+		f = Frame(self._MainFrame)
+		f.grid(row=0,column=0,sticky="NWSE")
+		self._PolarFrame = f
 
-        self._POCallsignEntry = Entry(f)
-        self._POCallsignEntry.grid(row=2,column=1,sticky="WE")
-        self._POCallsign = StringVar()
-        self._POCallsignEntry["textvariable"] = self._POCallsign
+		Label(f, text="MISSION POLAR COORDINATES").grid(row=0,column=0,columnspan=2)
+		Label(f, text="Select:"                  ).grid(row=1,column=0)
+		Label(f, text="Observer:"                ).grid(row=2,column=0)
+		Label(f, text="Observer Grid:"           ).grid(row=3,column=0)
+		Label(f, text="Observer Alt:"            ).grid(row=4,column=0)
+		Label(f, text="OT Dir:"                  ).grid(row=5,column=0)
+		Label(f, text="Range:"                   ).grid(row=6,column=0)
+		Label(f, text="Alt Dif:"                 ).grid(row=7,column=0)
 
-        self._POGridEntry = Entry(f)
-        self._POGridEntry.grid(row=3,column=1,sticky="WE")
-        self._POGrid = StringVar()
-        self._POGridEntry["textvariable"] = self._POGrid
+		self._POSelBox = Combobox(f)
+		##self._POSelBox.current(0)
+		self._POSelBox.grid(row=1,column=1,sticky="WE")
+		#self._POSelBox.bind("<<ComboboxSelected>>", self.Observer_Select)
 
-        self._POAltEntry = Entry(f)
-        self._POAltEntry.grid(row=4,column=1,sticky="WE")
-        self._POAlt = StringVar()
-        self._POAltEntry["textvariable"] = self._POAlt
+		self._POCallsignEntry = Entry(f)
+		self._POCallsignEntry.grid(row=2,column=1,sticky="WE")
+		self._POCallsign = StringVar()
+		self._POCallsignEntry["textvariable"] = self._POCallsign
 
-        self._POCommitButton = Button(f, text="Add / Update", command=self.PObserver_Commit)
-        self._POCommitButton.grid(row=1,column=2,rowspan=2,sticky="WE")
+		self._POGridEntry = Entry(f)
+		self._POGridEntry.grid(row=3,column=1,sticky="WE")
+		self._POGrid = StringVar()
+		self._POGridEntry["textvariable"] = self._POGrid
 
-        self._PODirEntry = Entry(f)
-        self._PODirEntry.grid(row=5,column=1,sticky="WE")
-        self._PODir = StringVar()
-        self._PODirEntry["textvariable"] = self._PODir
+		self._POAltEntry = Entry(f)
+		self._POAltEntry.grid(row=4,column=1,sticky="WE")
+		self._POAlt = StringVar()
+		self._POAltEntry["textvariable"] = self._POAlt
 
-        self._PORangeEntry = Entry(f)
-        self._PORangeEntry.grid(row=6,column=1,sticky="WE")
-        self._PORange = StringVar()
-        self._PORangeEntry["textvariable"] = self._PORange
+		self._POCommitButton = Button(f, text="Add / Update", command=self.PObserver_Commit)
+		self._POCommitButton.grid(row=1,column=2,rowspan=2,sticky="WE")
 
-        self._PODeltaAltEntry = Entry(f)
-        self._PODeltaAltEntry.grid(row=7,column=1,sticky="WE")
-        self._PODeltaAlt = StringVar()
-        self._PODeltaAltEntry["textvariable"] = self._PODeltaAlt
+		self._PODirEntry = Entry(f)
+		self._PODirEntry.grid(row=5,column=1,sticky="WE")
+		self._PODir = StringVar()
+		self._PODirEntry["textvariable"] = self._PODir
 
-        # Shift mission
+		self._PORangeEntry = Entry(f)
+		self._PORangeEntry.grid(row=6,column=1,sticky="WE")
+		self._PORange = StringVar()
+		self._PORangeEntry["textvariable"] = self._PORange
 
-        f = Frame(self._MainFrame)
-        f.grid(row=0,column=0,sticky="NWSE")
-        self._ShiftFrame = f
+		self._PODeltaAltEntry = Entry(f)
+		self._PODeltaAltEntry.grid(row=7,column=1,sticky="WE")
+		self._PODeltaAlt = StringVar()
+		self._PODeltaAltEntry["textvariable"] = self._PODeltaAlt
 
-        Label(f, text="MISSION SHIFT KNOWN POINT").grid(row=0,column=0,columnspan=2)
-        Label(f, text="Select:"                  ).grid(row=1,column=0)
-        Label(f, text="OT Dir:"                  ).grid(row=2,column=0)
-        Label(f, text="Left/Right:"              ).grid(row=3,column=0)
-        Label(f, text="Add/Drop:"                ).grid(row=4,column=0)
-        Label(f, text="Up/Down:"                 ).grid(row=5,column=0)
+		# Shift mission
 
+		f = Frame(self._MainFrame)
+		f.grid(row=0,column=0,sticky="NWSE")
+		self._ShiftFrame = f
 
-        self._SSelBox = Combobox(f)
-        self._SSelBox.grid(row=1,column=1,sticky="WE")
-
-        self._SDirEntry = Entry(f)
-        self._SDirEntry.grid(row=2,column=1,sticky="WE")
-        self._SDir = StringVar()
-        self._SDirEntry["textvariable"] = self._SDir
-
-        self._SLeftEntry = Entry(f)
-        self._SLeftEntry.grid(row=3,column=1,sticky="WE")
-        self._SLeft = StringVar()
-        self._SLeftEntry["textvariable"] = self._SLeft
-
-        self._SAddEntry = Entry(f)
-        self._SAddEntry.grid(row=4,column=1,sticky="WE")
-        self._SAdd = StringVar()
-        self._SAddEntry["textvariable"] = self._SAdd
-
-        self._SUpEntry = Entry(f)
-        self._SUpEntry.grid(row=5,column=1,sticky="WE")
-        self._SUp = StringVar()
-        self._SUpEntry["textvariable"] = self._SUp
+		Label(f, text="MISSION SHIFT KNOWN POINT").grid(row=0,column=0,columnspan=2)
+		Label(f, text="Select:"                  ).grid(row=1,column=0)
+		Label(f, text="OT Dir:"                  ).grid(row=2,column=0)
+		Label(f, text="Left/Right:"              ).grid(row=3,column=0)
+		Label(f, text="Add/Drop:"                ).grid(row=4,column=0)
+		Label(f, text="Up/Down:"                 ).grid(row=5,column=0)
 
 
+		self._SSelBox = Combobox(f)
+		self._SSelBox.grid(row=1,column=1,sticky="WE")
 
-    def PObserver_Commit(self):
-        print "Observer_Commit"
+		self._SDirEntry = Entry(f)
+		self._SDirEntry.grid(row=2,column=1,sticky="WE")
+		self._SDir = StringVar()
+		self._SDirEntry["textvariable"] = self._SDir
+
+		self._SLeftEntry = Entry(f)
+		self._SLeftEntry.grid(row=3,column=1,sticky="WE")
+		self._SLeft = StringVar()
+		self._SLeftEntry["textvariable"] = self._SLeft
+
+		self._SAddEntry = Entry(f)
+		self._SAddEntry.grid(row=4,column=1,sticky="WE")
+		self._SAdd = StringVar()
+		self._SAddEntry["textvariable"] = self._SAdd
+
+		self._SUpEntry = Entry(f)
+		self._SUpEntry.grid(row=5,column=1,sticky="WE")
+		self._SUp = StringVar()
+		self._SUpEntry["textvariable"] = self._SUp
+
+
+
+	def PObserver_Commit(self):
+		print "Observer_Commit"
+
+	def liftGrid(self):
+		self._MainFrame.lift()
+		self._GridFrame.lift()
+
 
 
 
@@ -328,30 +378,39 @@ class App:
 		self._bGridEntry.grid(row=3,column=1,sticky="WE")
 		self._bGrid = StringVar()
 		self._bGridEntry["textvariable"] = self._bGrid
-		self._bGrid.trace("w",lambda n,i,m,b=self.battery,v:self._bGrid.get:b.setGrid(v()))
+		
+		fg = lambda b=self._battery, v=self._bGrid.get : b.setGrid(v())
+		self._bGrid.trace("w",lambda n,i,m : BranchWrapped(fg,partial(val, x=self._bGridEntry),partial(inv, x=self._bGridEntry)))
 		
 		self._bAltEntry = Entry(batteryFrame)
 		self._bAltEntry.grid(row=4,column=1,sticky="WE")
 		self._bAlt = StringVar()
 		self._bAltEntry["textvariable"] = self._bAlt
-		self._bAlt.trace("w",lambda n,i,m,b=self.battery,v:self._bAlt.get:b.setAlt(v()))
+		#self._bAlt.trace("w",lambda n,i,m,b=self._battery,v=self._bAlt.get:b.setAlt(v()))
+		fa = lambda b=self._battery, v=self._bAlt.get : b.setAlt(v())
+		self._bAlt.trace("w",lambda n,i,m : BranchWrapped(fa,partial(val, x=self._bAltEntry),partial(inv, x=self._bAltEntry)))
 		
 		self._bLayEntry = Entry(batteryFrame)
 		self._bLayEntry.grid(row=5,column=1,sticky="WE")
 		self._bLay = StringVar()
 		self._bLayEntry["textvariable"] = self._bLay
-		self._bLay.trace("w",lambda n,i,m,b=self.battery,v:self._bLay.get:b.setLay(v()))
-
+		#self._bLay.trace("w",lambda n,i,m,b=self._battery,v=self._bLay.get:b.setLay(v()))
+		fl = lambda b=self._battery, v=self._bLay.get : b.setLay(v())
+		self._bLay.trace("w",lambda n,i,m : BranchWrapped(fl,partial(val, x=self._bLayEntry),partial(inv, x=self._bLayEntry)))
 		
 		self._bTgtPrefixEntry = Entry(batteryFrame)
 		self._bTgtPrefixEntry.grid(row=6,column=1,sticky="WE")
 		self._bTgtPrefix = StringVar()
 		self._bTgtPrefixEntry["textvariable"] = self._bTgtPrefix
+		self._bTgtPrefix.trace("w",lambda n,i,m,b=self._battery,v=self._bTgtPrefix.get:b.setPrefix(v()))
 		
 		self._bTgtOffsetEntry = Entry(batteryFrame)
 		self._bTgtOffsetEntry.grid(row=7,column=1,sticky="WE")
 		self._bTgtOffset = StringVar()
 		self._bTgtOffsetEntry["textvariable"] = self._bTgtOffset
+		#self._bTgtOffset.trace("w",lambda n,i,m,b=self._battery,v=self._bTgtOffset.get:b.setOffset(v()))
+		ft = lambda b=self._battery, v=self._bTgtOffset.get : b.setTgtOffset(v())
+		self._bTgtOffset.trace("w",lambda n,i,m : BranchWrapped(ft,partial(val, x=self._bTgtOffsetEntry),partial(inv, x=self._bTgtOffsetEntry)))
 
 		## Observer Information
 
@@ -377,11 +436,16 @@ class App:
 		self._OGridEntry.grid(row=3,column=5,sticky="WE")
 		self._OGrid = StringVar()
 		self._OGridEntry["textvariable"] = self._OGrid
+		#self._bLay.trace("w",lambda n,i,m : BranchWrapped(fl,partial(val, x=self._bLayEntry),partial(inv, x=self._bLayEntry)))
+		fog = lambda g = self._OGrid.get : B.Point(grid=g())
+		self._OGrid.trace("w", lambda n,i,m : BranchWrapped(fog, partial(val, x=self._OGridEntry), partial(inv, x=self._OGridEntry)))
 
 		self._OAltEntry = Entry(batteryFrame)
 		self._OAltEntry.grid(row=4,column=5,sticky="WE")
 		self._OAlt = StringVar()
 		self._OAltEntry["textvariable"] = self._OAlt
+		foa = lambda g = self._OAlt.get : B.Point(alt=g())
+		self._OAlt.trace("w", lambda n,i,m : BranchWrapped(foa, partial(val, x=self._OAltEntry), partial(inv, x=self._OAltEntry)))
 
 		self._OCommitButton = Button(batteryFrame, text="Add / Update", command=self.Observer_Commit)
 		self._OCommitButton.grid(row=5,column=5,sticky="WE")
@@ -409,18 +473,22 @@ class App:
 		self._KGridEntry.grid(row=9,column=5,sticky="WE")
 		self._KGrid = StringVar()
 		self._KGridEntry["textvariable"] = self._KGrid
+		fkg = lambda g = self._KGrid.get : B.Point(grid=g())
+		self._KGrid.trace("w", lambda n,i,m : BranchWrapped(fkg, partial(val, x=self._KGridEntry), partial(inv, x=self._KGridEntry)))
 
 		self._KAltEntry = Entry(batteryFrame)
 		self._KAltEntry.grid(row=10,column=5,sticky="WE")
 		self._KAlt = StringVar()
 		self._KAltEntry["textvariable"] = self._KAlt
+		fka = lambda g = self._KAlt.get : B.Point(alt=g())
+		self._KAlt.trace("w", lambda n,i,m : BranchWrapped(fka, partial(val, x=self._KAltEntry), partial(inv, x=self._KAltEntry)))
 
 		self._KCommitButton = Button(batteryFrame, text="Add / Update", command=self.KnownPoint_Commit)
 		self._KCommitButton.grid(row=11,column=5,sticky="WE")
 
 		## Mission Buttons
 
-		self._MGridButton = Button(batteryFrame, text="GRID", width=8)
+		self._MGridButton = Button(batteryFrame, text="GRID", width=8, command=self.GridMissionClick)
 		self._MGridButton.grid(row=12,column=0)
 
 		self._MPolarButton = Button(batteryFrame, text="POLAR", width=8)
@@ -453,16 +521,10 @@ class App:
 
 		## logic
 
-	def BatteryNameChange(self, *args):
-		self._battery._info[0] = self._bName.get()
+	def GridMissionClick(self):
+		print "Grid Mission Button"
+		self._adjustFrame.liftGrid()
 
-	def BatteryCallsignChange(self, *args):
-		self._battery._info[1] = self._bCallsign.get()
-
-	def BatteryType_Select(self, event):
-		self._battery._info[2] = R.guns.keys()[self._bTypeBox.current()]
-		print self._bTypeBox.get()
-		print self._battery._info[2]
 
 	def LoadButtonClick(self):
 		print "Load Button"
@@ -524,6 +586,8 @@ class App:
 			
 
 root = Tk()
+
+Style().configure('Invalid.TEntry', fieldbackground='indian red')
 
 app = App(root)
 
