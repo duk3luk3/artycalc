@@ -211,12 +211,14 @@ class AdjustMissionFrame:
 		self._GGridEntry = Entry(f)
 		self._GGridEntry.grid(row=1,column=1, sticky="WE")
 		self._GGrid = StringVar()
-		self._GGridEntry["textvariable"] = Self._GGrid
+		self._GGridEntry["textvariable"] = self._GGrid
+		fgg = lambda v=self._GGrid.get : B.Point(grid=v())
+		self._GGrid.trace("w",lambda n,i,m : BranchWrapped(fgg,partial(val, x=self._GGridEntry),partial(inv, x=self._GGridEntry)))
 
 		self._GAltEntry = Entry(f)
 		self._GAltEntry.grid(row=2,column=1, sticky="WE")
 		self._GAlt = StringVar()
-		self._GAltEntry["textvariable"] = Self._GAlt
+		self._GAltEntry["textvariable"] = self._GAlt
 
 		# Polar mission
 
