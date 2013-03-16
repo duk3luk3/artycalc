@@ -29,14 +29,7 @@ def BranchWrapped(f, success, fail):
 		print "fail"
 		print inst
 
-def ApplyStyle(w,s):
-	w['style']=s
-	print w['style']
 
-NormalStyle = lambda w: ApplyStyle(w,'TEntry')
-InvalidStyle = lambda w: ApplyStyle(w, 'Invalid.TEntry')
-inv = lambda x: InvalidStyle(x)
-val = lambda x: NormalStyle(x)
 
 # frames
 
@@ -85,6 +78,8 @@ class AdjustMissionFrame:
 
 		f.columnconfigure(0, weight=1)
 		f.columnconfigure(1, weight=1)
+
+		# target info frame
 
 		f = Frame(self._MainFrame)
 		f.grid(row=1,column=0, sticky="WE")
